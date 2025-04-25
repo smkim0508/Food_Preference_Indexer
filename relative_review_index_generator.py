@@ -1,23 +1,37 @@
 import numpy as np
+import os
+from itertools import combinations
 
-# test
-A = np.array([5, 5, 5])
-B = np.array([5, 5, 1])
+# scaled cosine similarity, accounting for magnitude
+def scaled_cos_sim(a, b):
+   norm_a = np.linalg.norm(a)
+   norm_b = np.linalg.norm(b)
+   cos_sim = np.dot(a, b) / (norm_a * norm_b) # calculate cosine similarity value
+   mag_ratio = min(norm_a, norm_b) / max(norm_a, norm_b) # calculate ratio of magnitudes to scale
+   return cos_sim * mag_ratio  # reduces score when magnitudes differ
 
-# compute cosine similarity
-# cos_sim = np.dot(A, B) / (np.linalg.norm(A) * np.linalg.norm(B))
+# writing a script to take in .txt file and calculate cosine sim values for each pairing
 
-# print("Cosine Similarity:", cos_sim)
+# first load in data and parse through it into a list
 
-# naive testing w/ pure cosine, need to account for magnitude too since we want diff reviews to be harshly viewed
+folder_path = './' # set folder path as current directory
+delimiter = '\n' # delimeter for files
+ratings = [] # empty list
 
-# testing with scaled cosine similarity, accounting for magnitude
-def scaled_cosine_penalty(a, b):
-    cos_sim = np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
-    mag_ratio = min(np.linalg.norm(a), np.linalg.norm(b)) / max(np.linalg.norm(a), np.linalg.norm(b))
-    print(mag_ratio)
-    return cos_sim * mag_ratio  # reduces score when magnitudes differ
+# loop and extract data from each file into ratings array
+for filename in os.listdir(folder_path):
+   if filename.endswith('.txt'): # could be changed to be more specific
+      file_path = os.path.join(folder_path, filename)
+      with open(file_path, 'r', encoding='utf-8') as file:
+         content = file.read()
+         parts = content.split(delimiter)  # split the file content using delimiter
+         ratings.append(np.array(parts, dtype = 'float'))
 
-print(scaled_cosine_penalty([5, 5, 1], [5, 5, 5])) 
+# then use combinations function to make pairings
+pairs = list(combinations(range(len(ratings)), 2))
 
-# need to verify math
+relative_index = {}
+for i, j in pairs:
+    sim = scaled_cos_sim(ratings[i], ratings[j])
+    relative_index[(i, j)] = sim
+    print(f"cosine similarity between vectors {i} and {j}: {sim:.4f}")
