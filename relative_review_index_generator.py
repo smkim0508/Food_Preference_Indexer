@@ -30,6 +30,7 @@ for filename in os.listdir(folder_path):
 # then use combinations function to make pairings
 pairs = list(combinations(range(len(ratings)), 2))
 
+# find the cos similarity values for each pair and save result
 relative_index = {}
 for i, j in pairs:
     sim = scaled_cos_sim(ratings[i], ratings[j])
