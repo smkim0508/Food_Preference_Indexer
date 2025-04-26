@@ -1,0 +1,53 @@
+Asian
+Chinese
+Korean
+Japanese
+Taiwanese
+Thai
+Malaysian
+Vietnamese
+Singaporean
+Italian
+French
+American
+Fast Food
+Mexican
+Indian
+Mediterranean
+Greek
+Spanish
+Lebanese
+Middle Eastern
+Brazilian
+Caribbean
+Cuban
+African
+Ethiopian
+Moroccan
+German
+Polish
+Russian
+Turkish
+Filipino
+Hawaiian
+Cajun
+Pakistani
+Peruvian
+Argentinian
+Irish
+British
+Australian
+New Zealand
+Soul Food
+Southern
+Seafood
+Vegetarian
+Vegan
+Gluten-Free
+Pizza
+Burgers
+Sandwiches
+Sushi Bars
+Cafe
+Bubble Tea
+Coffee & Tea
