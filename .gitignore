@@ -1,0 +1,6 @@
+# any files relating to dataset / intermediate dataframes
+*.pkl
+*.csv
+*.txt
+*.json
+*.xlsx
