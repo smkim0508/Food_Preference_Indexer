@@ -39,10 +39,9 @@ with open('cuisines.txt', 'r', encoding='utf-8') as file:
 
 # creating a dict where each keyword = cuisine, each value = pandas df that contains sorted_df filtered by each cuisine category
 for cuisine in cuisines[0]: #flatten cuisines list
-    keyword = cuisine
-    # create separate df for each cuisine in cuisines list
-    df_cuisines[keyword] = sorted_df[sorted_df['categories'].str.contains(keyword, case=False, na=False)]
+   keyword = cuisine
+   # create separate df for each cuisine in cuisines list
+   df_cuisines[keyword] = sorted_df[sorted_df['categories'].str.contains(keyword, case=False, na=False)]
 
 # test with one of the cuisines
 print(df_cuisines['Taiwanese'])
-
