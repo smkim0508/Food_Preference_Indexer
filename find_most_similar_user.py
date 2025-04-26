@@ -11,6 +11,7 @@ def scaled_cos_sim(a, b):
 
 # load in top 10 user data
 all_user_ratings_df = pd.read_pickle('user_ratings.pkl') # many users
+all_user_ids = all_user_ratings_df.index.tolist() # also save the user_ids to map later
 # load in the target user to compare with
 target_user_ratings_df = pd.read_pickle('dummy_ratings.pkl') # few users
 
@@ -37,7 +38,7 @@ for target_idx, target_vec in enumerate(target_user_vectors):
    for idx, user_vec in enumerate(all_user_vectors):
       sim = scaled_cos_sim(target_vec, user_vec)
       # keep track of all similarities
-      similarities.append((idx, sim))
+      similarities.append((idx, all_user_ids[idx], sim))
    
    # sort by the most similar users
    similarities.sort(key=lambda x: x[1], reverse=True)
@@ -49,5 +50,5 @@ for target_idx, target_vec in enumerate(target_user_vectors):
 # print results
 for target_user, matches in top_matches.items():
    print(f"Target user {target_user} top matches:")
-   for user_idx, sim in matches:
-      print(f"\tUser {user_idx} with similarity {sim:.4f}")
+   for idx, user_id, sim in matches:
+      print(f"\tUser {idx}: {user_id} with similarity {sim:.4f}")
