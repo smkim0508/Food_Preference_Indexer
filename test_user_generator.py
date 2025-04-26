@@ -1,3 +1,4 @@
+# generate dummy users with dummy ratings on all cuisines
 import pandas as pd
 import random
 
@@ -19,11 +20,6 @@ for i, cuisine in enumerate(cuisines):
    user3_ratings.append(5*random.random()) # a dummy user with random ratings in range [0, 5]
 
 # checking
-ratings_df = pd.DataFrame({
-    'cuisine': cuisines,
-    'user1': user_ratings,
-    'user2': user2_ratings,
-    'user3': user3_ratings
-})
+ratings_df = pd.DataFrame([user_ratings, user2_ratings, user3_ratings], index=['user1', 'user2', 'user3'])
 
-print(ratings_df)
+ratings_df.to_pickle('dummy_ratings.pkl')
