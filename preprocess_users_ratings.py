@@ -71,4 +71,3 @@ user_ratings_df = pd.DataFrame.from_dict(user_ratings, orient='index', columns=c
 user_ratings_df.to_csv('user_ratings.csv', index=True)
 # save as .pkl for python efficiency
 user_ratings_df.to_pickle('user_ratings.pkl')
-

@@ -27,24 +27,27 @@ all_user_vectors = all_user_ratings_df.astype(float).apply(lambda row: row.tolis
 target_user_vectors = target_user_ratings_df.astype(float).apply(lambda row: row.tolist(), axis=1).tolist()
 
 # store top matches
-best_matches = {}
+top_matches = {}
 
 # loop through each target user
 for target_idx, target_vec in enumerate(target_user_vectors):
-   best_sim = -1  # start with lowest similarity
-   best_user_idx = None
+   similarities = []
+
    # loop through all users
    for idx, user_vec in enumerate(all_user_vectors):
-      if (idx == 1): print(user_vec)
       sim = scaled_cos_sim(target_vec, user_vec)
-      # print(sim)
-      if sim > best_sim:
-         best_sim = sim
-         best_user_idx = idx
+      # keep track of all similarities
+      similarities.append((idx, sim))
    
-   # save the best matching user for this target user
-   best_matches[target_idx] = (best_user_idx, best_sim)
+   # sort by the most similar users
+   similarities.sort(key=lambda x: x[1], reverse=True)
 
-# check results
-for target_user, (best_user, similarity) in best_matches.items():
-    print(f"Target user {target_user} best matches with {best_user} (similarity = {similarity:.4f})")
+   # pick top 3 matches and save
+   top_3 = similarities[:3]
+   top_matches[target_idx] = top_3
+
+# print results
+for target_user, matches in top_matches.items():
+   print(f"Target user {target_user} top matches:")
+   for user_idx, sim in matches:
+      print(f"\tUser {user_idx} with similarity {sim:.4f}")
