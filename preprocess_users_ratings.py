@@ -15,7 +15,8 @@ grouped_users = df.groupby('user_id')['business_id'].apply(list).reset_index()
 grouped_users['review_count'] = grouped_users['business_id'].apply(len) # add a column for how many reviews each user wrote
 users_sorted = grouped_users.sort_values(by=['review_count'], ascending=False) # sort df to place users with most reviews at the top
 
-top_users = users_sorted.head(10) #take top users with the most number of reviews
+# top_users = users_sorted.head(10) # takes top users with the most number of reviews
+top_users = users_sorted[users_sorted['review_count'] > 300] # takes top users with pruning approach, e.g. with more than 300 reviews
 
 # df_cuisines
 # load in cuisines.txt to parse data
@@ -32,11 +33,6 @@ for cuisine in cuisines:
    keyword = cuisine
    # create separate df for each cuisine in cuisines list
    df_cuisines[keyword] = business_df[business_df['categories'].str.contains(keyword, case=False, na=False)]
-
-
-# print(df['business_id'].head())
-# print(df_cuisines['Korean']['business_id'].head())
-
 
 # initialize the final dictionary
 user_ratings = {}
@@ -68,6 +64,6 @@ for user_id in top_users['user_id']:
 user_ratings_df = pd.DataFrame.from_dict(user_ratings, orient='index', columns=cuisines)
 
 # save as .csv for easy visual check
-user_ratings_df.to_csv('user_ratings.csv', index=True)
+user_ratings_df.to_csv('user_ratings_gt_300.csv', index=True)
 # save as .pkl for python efficiency
-user_ratings_df.to_pickle('user_ratings.pkl')
+user_ratings_df.to_pickle('user_ratings_gt_300.pkl')

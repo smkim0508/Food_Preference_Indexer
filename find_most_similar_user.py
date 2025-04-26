@@ -9,8 +9,9 @@ def scaled_cos_sim(a, b):
    mag_ratio = min(norm_a, norm_b) / max(norm_a, norm_b) # calculate ratio of magnitudes to scale
    return cos_sim * mag_ratio  # reduces score when magnitudes differ
 
-# load in top 10 user data
-all_user_ratings_df = pd.read_pickle('user_ratings.pkl') # many users
+# load in all users data
+# all_user_ratings_df = pd.read_pickle('user_ratings.pkl') # to load top 10 users with most reviews
+all_user_ratings_df = pd.read_pickle('user_ratings_gt_300.pkl') # to load all users with more than 100 reviews
 all_user_ids = all_user_ratings_df.index.tolist() # also save the user_ids to map later
 # load in the target user to compare with
 target_user_ratings_df = pd.read_pickle('dummy_ratings.pkl') # few users
@@ -41,7 +42,7 @@ for target_idx, target_vec in enumerate(target_user_vectors):
       similarities.append((idx, all_user_ids[idx], sim))
    
    # sort by the most similar users
-   similarities.sort(key=lambda x: x[1], reverse=True)
+   similarities.sort(key=lambda x: x[2], reverse=True)
 
    # pick top 3 matches and save
    top_3 = similarities[:3]
