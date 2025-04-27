@@ -1,13 +1,6 @@
 import numpy as np
 import pandas as pd
-
-# scaled cosine similarity, accounting for magnitude
-def scaled_cos_sim(a, b):
-   norm_a = np.linalg.norm(a)
-   norm_b = np.linalg.norm(b)
-   cos_sim = np.dot(a, b) / (norm_a * norm_b) # calculate cosine similarity value
-   mag_ratio = min(norm_a, norm_b) / max(norm_a, norm_b) # calculate ratio of magnitudes to scale
-   return cos_sim * mag_ratio  # reduces score when magnitudes differ
+from scaled_cos_similarity import scaled_cos_sim # import function
 
 # load in all users data
 # all_user_ratings_df = pd.read_pickle('user_ratings.pkl') # to load top 10 users with most reviews
