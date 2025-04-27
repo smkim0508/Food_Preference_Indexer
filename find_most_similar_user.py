@@ -2,14 +2,21 @@ import numpy as np
 import pandas as pd
 from scaled_cos_similarity import scaled_cos_sim # import function
 
-def find_top_matches(all_users_path, target_user_path, top_n=3):
-   
-   # load in all users data
-   # all_user_ratings_df = pd.read_pickle('user_ratings.pkl') # to load top 10 users with most reviews
-   all_user_ratings_df = pd.read_pickle(all_users_path) # to load all users with more than 100 reviews
-   all_user_ids = all_user_ratings_df.index.tolist() # also save the user_ids to map later
-   # load in the target user to compare with
-   target_user_ratings_df = pd.read_pickle(target_user_path)
+def find_top_matches(all_user_ratings_df, target_user_ratings_df, top_n=3):
+   """
+    find top N most similar users for each target user based on scaled cosine similarity.
+
+    args:
+        all_user_ratings_df (pd.DataFrame): DataFrame with all users' rating data (index = user_id).
+        target_user_ratings_df (pd.DataFrame): DataFrame with target users' rating data.
+        top_n (int): Number of top matches to return.
+
+    returns:
+        dict: {target_user_idx: [(user_idx, user_id, similarity), ...]}
+    """
+
+   # save the user_ids to map later
+   all_user_ids = all_user_ratings_df.index.tolist()
 
    # handle NaN with 0
    all_user_ratings_df = all_user_ratings_df.fillna(0)
@@ -39,10 +46,19 @@ def find_top_matches(all_users_path, target_user_path, top_n=3):
    # pick top_n matches and save
    top_matches = similarities[:top_n]
 
-   # print results
-   for idx, user_id, sim in top_matches:
-      print(f"\tUser {idx}: {user_id} with similarity {sim:.4f}")
+   # # print results, to test
+   # for idx, user_id, sim in top_matches:
+   #    print(f"\tUser {idx}: {user_id} with similarity {sim:.4f}")
+
+   return top_matches
 
 # to test the script
 if __name__ == "__main__":
-   find_top_matches('user_ratings_gt_300.pkl','dummy_ratings.pkl',3)
+   # load in all users data
+   # all_user_ratings_df = pd.read_pickle('user_ratings.pkl') # to load top 10 users with most reviews
+   all_user_ratings_df = pd.read_pickle('user_ratings_gt_300.pkl') # to load all users with more than 100 reviews
+   # load in the target user to compare with
+   target_user_ratings_df = pd.read_pickle('dummy_ratings.pkl')
+   
+   # call function to test
+   find_top_matches(all_user_ratings_df, target_user_ratings_df,3)
