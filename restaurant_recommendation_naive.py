@@ -3,15 +3,21 @@ import pandas as pd
 # load data
 reviews_df = pd.read_pickle('reviews.pkl')
 business_df = pd.read_pickle('business.pkl')
+top_users_df = pd.read_pickle('user_ratings.pkl') # top 10 users with most reviews
+top_business_df = pd.read_csv('top_reviewed_restaurants.csv') # top 10 most reviewed restaurants
 
-# specify user and target restaurant
-target_user_id = 'bYENop4BuQepBjM1-BI3fA' # dummy ex
-target_business_id = 'c8GjPIOTGVmIemT7j5_SyQ' # dummy ex
+# turn into lists
+top_user_ids = top_users_df.index.tolist()
+top_business_ids = top_business_df[top_business_df.columns[0]].tolist()
+
+# arbitary, select any top user and top restaurant for testing
+target_business_id = top_business_ids[0]
+target_user_id = top_user_ids[0]
 
 # get target restaurant's categories
 target_categories = business_df.loc[business_df['business_id'] == target_business_id, 'categories'].values
 if len(target_categories) == 0:
-   raise ValueError("Business ID not found.")
+   raise ValueError("business_id not found.")
 target_categories = target_categories[0].split(', ')
 
 # find the restaurants reviewed by target user
@@ -46,8 +52,9 @@ print(yelp_rating)
 
 # calculate the recommended score based on following equation:
 # [((0.1/(1.1 - (my rating/5)))-0.55) * (0.1/(business rating/5))] + business rating
+# [((0.2/(1.1 - (my rating/5)))-1) * (0.5/(business rating/5))] + business rating
 # gives advantage to my rating being really high and penalizes if bad, also scales less if the business rating is already high
 
-final_score = min(((0.1/(1.1-(weighted_avg_score/5)))-0.55) * (0.1/(yelp_rating/5)) + yelp_rating, 5) # min() ensures max score of 5
+final_score = min(((0.2/(1.1-(weighted_avg_score/5)))-1) * (0.5/(yelp_rating/5)) + yelp_rating, 5) # min() ensures max score of 5
 
 print(final_score)

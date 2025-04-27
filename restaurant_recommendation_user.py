@@ -5,11 +5,21 @@ from scaled_cos_similarity import scaled_cos_sim
 reviews_df = pd.read_pickle('reviews.pkl')
 business_df = pd.read_pickle('business.pkl')
 user_ratings_df = pd.read_pickle('user_ratings.pkl')  # your user preference profiles
+top_users_df = pd.read_pickle('user_ratings.pkl') # top 10 users with most reviews
+top_business_df = pd.read_csv('top_reviewed_restaurants.csv') # top 10 most reviewed restaurants
 
-# target user and restaurant
-target_business_id = '_ab50qdWOk0DdB6XOrBitw'  # dummy ex
-target_user_id = 'bYENop4BuQepBjM1-BI3fA' # dummy ex
+# turn into lists
+top_user_ids = top_users_df.index.tolist()
+top_business_ids = top_business_df[top_business_df.columns[0]].tolist()
+
+# arbitary, select any top user and top restaurant for testing
+target_business_id = top_business_ids[0]
+target_user_id = top_user_ids[0]
 target_user_vector = user_ratings_df.loc[target_user_id].fillna(0).astype(float).tolist() # convert to list
+
+# snippet to test functionality; by selecting a business that the target user has reviewed, we expect the same user to appear in sim index with sim 1.0
+# user_reviews = reviews_df[reviews_df['user_id'] == target_user_id]
+# target_business_id = user_reviews.iloc[0]['business_id']
 
 # find all users that reviewed the target restaurant
 reviewed_users = reviews_df[reviews_df['business_id'] == target_business_id]['user_id'].unique()
