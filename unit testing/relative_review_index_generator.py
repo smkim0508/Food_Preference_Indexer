@@ -1,13 +1,17 @@
 import numpy as np
+import sys
 import os
 from itertools import combinations
-from scaled_cos_similarity import scaled_cos_sim
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from utils.scaled_cos_similarity import scaled_cos_sim
 
 # writing a script to take in .txt file and calculate cosine sim values for each pairing
 
 # first load in data and parse through it into a list
 
-folder_path = './' # set folder path as current directory
+folder_path = '../test files/' # set folder path as current directory
 delimiter = '\n' # delimeter for files
 ratings = [] # empty list
 

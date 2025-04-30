@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from scaled_cos_similarity import scaled_cos_sim # import function
+from utils.scaled_cos_similarity import scaled_cos_sim # import function
 
 def find_top_matches(all_user_ratings_df, target_user_ratings_df, top_n=3):
    """
@@ -56,9 +56,9 @@ def find_top_matches(all_user_ratings_df, target_user_ratings_df, top_n=3):
 if __name__ == "__main__":
    # load in all users data
    # all_user_ratings_df = pd.read_pickle('user_ratings.pkl') # to load top 10 users with most reviews
-   all_user_ratings_df = pd.read_pickle('user_ratings_gt_300.pkl') # to load all users with more than 100 reviews
+   all_user_ratings_df = pd.read_pickle('data/user_ratings_gt_300.pkl') # to load all users with more than 100 reviews
    # load in the target user to compare with
-   target_user_ratings_df = pd.read_pickle('dummy_ratings.pkl')
+   target_user_ratings_df = pd.read_pickle('data/dummy_ratings.pkl')
    
    # call function to test
-   find_top_matches(all_user_ratings_df, target_user_ratings_df,3)
+   print(find_top_matches(all_user_ratings_df, target_user_ratings_df,3))

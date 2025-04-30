@@ -1,11 +1,11 @@
 import pandas as pd
-from scaled_cos_similarity import scaled_cos_sim
+from utils.scaled_cos_similarity import scaled_cos_sim
 
 # load data
-reviews_df = pd.read_pickle('reviews.pkl')
-business_df = pd.read_pickle('business.pkl')
-user_ratings_df = pd.read_pickle('user_ratings.pkl')  # your user preference profiles
-top_users_df = pd.read_pickle('user_ratings.pkl') # top 10 users with most reviews
+reviews_df = pd.read_pickle('data/reviews.pkl')
+business_df = pd.read_pickle('data/business.pkl')
+user_ratings_df = pd.read_pickle('data/user_ratings.pkl')  # your user preference profiles
+top_users_df = pd.read_pickle('data/user_ratings.pkl') # top 10 users with most reviews
 top_business_df = pd.read_csv('top_reviewed_restaurants.csv') # top 10 most reviewed restaurants
 
 # turn into lists

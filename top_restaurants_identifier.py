@@ -16,8 +16,8 @@ def find_most_reviewed_restaurants(business_df, reviews_df, top_n=10):
 
 # for simple print test
 if __name__ == "__main__":
-   reviews_df = pd.read_pickle('reviews.pkl')
-   business_df = pd.read_pickle('business.pkl')
+   reviews_df = pd.read_pickle('data/reviews.pkl')
+   business_df = pd.read_pickle('data/business.pkl')
 
    top_restaurants = find_most_reviewed_restaurants(
       business_df, 

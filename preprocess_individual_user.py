@@ -2,7 +2,7 @@
 import numpy as np
 import pandas as pd
 
-def compute_user_cuisine_profile(merged_df, user_id, cuisines_file='cuisines.txt'):
+def preprocess_individual(merged_df, user_id, cuisines_file='cuisines.txt'):
    """
    Given merged_df (reviews merged with business info) and a specific user_id,
    return the user's average ratings across each cuisine type.
@@ -45,25 +45,23 @@ def compute_user_cuisine_profile(merged_df, user_id, cuisines_file='cuisines.txt
          avg_rating = np.nan
       
       user_vector.append(avg_rating)
-
-   data = {'user_id': [user_id]}  # start with user_id
-   for cuisine, rating in zip(cuisines, user_vector):
-      data[cuisine] = [rating]
-
-   user_cuisine_profile = pd.DataFrame(data)
+   
+   # user_id becomes the index, cuisines is the columns
+   user_cuisine_profile = pd.DataFrame({cuisine: [rating] for cuisine, rating in zip(cuisines, user_vector)}, index=[user_id])
+   user_cuisine_profile.index.name = 'user_id'
 
    return user_cuisine_profile
 
 if __name__ == '__main__':
    # load in df from .pkl file
-   df = pd.read_pickle('reviews.pkl')
-   business_df = pd.read_pickle('business.pkl')
+   df = pd.read_pickle('data/reviews.pkl')
+   business_df = pd.read_pickle('data/business.pkl')
 
    # preprocess business & categories
    merged_df = pd.merge(df, business_df[['business_id', 'categories']], on='business_id', how='left')
 
-   top_users_df = pd.read_pickle('user_ratings.pkl') # top 10 users with most reviews
+   top_users_df = pd.read_pickle('data/user_ratings.pkl') # top 10 users with most reviews
    top_user_ids = top_users_df.index.tolist()
    target_user_id = top_user_ids[0]
 
-   print(compute_user_cuisine_profile(merged_df, target_user_id))
+   print(preprocess_individual(merged_df, target_user_id))

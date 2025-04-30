@@ -2,8 +2,8 @@ import numpy as np
 import pandas as pd
 
 # load in df from .pkl file
-df = pd.read_pickle('reviews.pkl')
-business_df = pd.read_pickle('business.pkl')
+df = pd.read_pickle('data/reviews.pkl')
+business_df = pd.read_pickle('data/business.pkl')
 
 # preprocess business & categories
 merged_df = pd.merge(df, business_df[['business_id', 'categories']], on='business_id', how='left')
