@@ -1,8 +1,14 @@
 # similar to preprocess_users_ratings.py, but for one user
 import numpy as np
 import pandas as pd
+import os
+import sys
 
-def preprocess_individual(merged_df, user_id, cuisines_file='cuisines.txt'):
+# add the Food_Preference_Indexer directory to python path manually, could be made more flexible later
+FOOD_PREFERENCE_PATH = "/Users/sungminkim/Desktop/Git Projects/Food_Preference_Indexer"
+sys.path.append(FOOD_PREFERENCE_PATH)
+
+def preprocess_individual(merged_df, user_id, cuisines_file=os.path.join(FOOD_PREFERENCE_PATH, 'cuisines.txt')):
    """
    Given merged_df (reviews merged with business info) and a specific user_id,
    return the user's average ratings across each cuisine type.

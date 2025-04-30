@@ -22,4 +22,4 @@ for i, cuisine in enumerate(cuisines):
 # checking
 ratings_df = pd.DataFrame([user_ratings, user2_ratings, user3_ratings], index=['user1', 'user2', 'user3'])
 
-ratings_df.to_pickle('dummy_ratings.pkl')
+ratings_df.to_pickle('../data/dummy_ratings.pkl')

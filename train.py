@@ -6,10 +6,10 @@ import numpy as np
 from sklearn.preprocessing import MultiLabelBinarizer
 
 # load data
-reviews_df = pd.read_pickle('reviews.pkl')
-business_df = pd.read_pickle('business.pkl')
+reviews_df = pd.read_pickle('data/reviews.pkl')
+business_df = pd.read_pickle('data/business.pkl')
 
-top_users_df = pd.read_pickle('user_ratings.pkl') # top 10 users with most reviews
+top_users_df = pd.read_pickle('data/user_ratings.pkl') # top 10 users with most reviews
 top_user_ids = top_users_df.index.tolist()
 
 # pick specific user
