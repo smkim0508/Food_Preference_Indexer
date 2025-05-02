@@ -33,6 +33,7 @@ def build_feature_matrix_all(reviews, business, user_cuisine, cuisines, states):
    user_stats = reviews.groupby('user_id')['stars']\
                      .agg(user_mean='mean')\
                      .assign(user_harsh=lambda df: df['user_mean'] - global_mean)
+   user_stats['user_review_count'] = reviews.groupby('user_id').size()
    print('checkpoint 1')
 
    # merge review with user stats; becomes duplicated for all reviews by each user
@@ -69,7 +70,7 @@ def build_feature_matrix_all(reviews, business, user_cuisine, cuisines, states):
 
    # build list of features
    feature_cols = (
-      ['stars_yelp','latitude','longitude','user_mean','user_harsh']
+      ['stars_yelp','latitude','longitude','user_mean','user_harsh', 'user_review_count']
       + [f'cuisine_{c}' for c in cuisines]
       + [f'flag_{c}'    for c in cuisines]
       + [f'state_{s}'    for s in states]

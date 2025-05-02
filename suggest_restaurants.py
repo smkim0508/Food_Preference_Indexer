@@ -53,6 +53,8 @@ target_cuisine = input("Enter the cuisine (e.g., Korean): ").strip()
 
 # find top similar users
 top_matches = find_top_matches(all_user_ratings_df, target_user_ratings_df, top_n=5)
+# exclude the target user
+# top_matches = [(idx, uid, sim) for (idx, uid, sim) in top_matches if uid != target_user_id]
 
 # go through top matches
 for idx, (user_idx, matched_user_id, sim) in enumerate(top_matches):
