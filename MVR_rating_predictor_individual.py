@@ -12,6 +12,11 @@ def load_cuisines(path='cuisines.txt'):
    with open(path, 'r', encoding='utf-8') as f:
       return [line.strip() for line in f if line.strip()]
 
+# function to read valid US states
+def load_states(path='states.txt'):
+   with open(path, 'r', encoding='utf-8') as f:
+      return [line.strip() for line in f if line.strip()]
+
 # function to load in all the dataframes
 def load_data(reviews_path, business_path, user_cuisine_path):
    reviews = pd.read_pickle(reviews_path)
@@ -62,28 +67,37 @@ def build_feature_matrix(user_reviews, business_df, user_cuisine, cuisines, user
       return {f'flag_{c}': int(c.lower() in tags) for c in cuisines}
    flags_df = df['categories'].apply(flags_from_cuisines).apply(pd.Series)
    df = pd.concat([df, flags_df], axis=1)
+   print(flags_df)
+   # flags_df.to_csv('flags.csv', index=False) # check output
 
    # states one-hot encoding
-   state_dummies = pd.get_dummies(df['state'], prefix='state')
-   df = pd.concat([df, state_dummies], axis=1)
+   states = load_states('states.txt')
+
+   for s in states:
+    df[f'state_{s}'] = (df['state'] == s).astype(int)
 
    # define feature columns
    feature_cols = (
       ['stars_y','latitude','longitude','user_mean','user_harsh']
-      + [f'cuisine_{c}' for c in cuisines]
+      # + [f'cuisine_{c}' for c in cuisines]
       + [f'flag_{c}' for c in cuisines]
-      + list(state_dummies.columns)
+      + [f'state_{s}' for s in states]
    )
+   print(feature_cols)
+
+   df.to_csv('df_penultimate.csv', index=False)
 
    # build X and y, and fill any NaNs with 0
    X = df[feature_cols].fillna(0)
+   X.to_csv('df_final.csv', index=False)
+
    y = df['stars_x']
    return X, y
 
 # train the multivariable regressor and evaluate it
 def train_and_evaluate(X, y, test_size=0.2, random_state=42, alpha=1.0):
    """
-   Split into train/validation, fit a Ridge regression pipeline,
+   split into train/validation, fit a Ridge regression pipeline,
    and return (fitted_model, rmse, predictions_on_val).
    """
    X_train, X_val, y_train, y_val = train_test_split(
