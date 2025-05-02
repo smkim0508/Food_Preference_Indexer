@@ -4,85 +4,123 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import Ridge
-from sklearn.pipeline import make_pipeline
+from sklearn.pipeline import Pipeline
 from sklearn.metrics import mean_squared_error
 
-# load the cuisines list from cuisines.txt
-with open('cuisines.txt', 'r', encoding='utf-8') as f:
-    cuisines = [line.strip() for line in f if line.strip()]
+# function to read designated cuisines
+def load_cuisines(path='cuisines.txt'):
+   with open(path, 'r', encoding='utf-8') as f:
+      return [line.strip() for line in f if line.strip()]
 
-# load data
-reviews      = pd.read_pickle('data/reviews.pkl')
-business     = pd.read_pickle('data/business.pkl')
-user_cuisine = pd.read_pickle('data/user_ratings_gt_300.pkl')  # user × cuisine avg
+# function to load in all the dataframes
+def load_data(reviews_path, business_path, user_cuisine_path):
+   reviews = pd.read_pickle(reviews_path)
+   business = pd.read_pickle(business_path)
+   user_cuisine = pd.read_pickle(user_cuisine_path)
+   return reviews, business, user_cuisine
 
-# dummy user / business
-top_business_df    = pd.read_csv('top_reviewed_restaurants.csv')
-business_ids       = top_business_df[top_business_df.columns[0]].tolist()
-top_users_df       = pd.read_pickle('data/user_ratings.pkl')
-target_business_id = business_ids[0]
+# function to process user data to find statistics about their reviews
+def get_user_stats(reviews_df, user_id):
+   """
+   filters reviews for a single user and compute:
+   - user_reviews: dataframe of just that user's reviews
+   - user_mean: their average rating
+   - user_harsh: difference from global mean (harshness/generosity), which can be positive or negative
+   """
+   global_mean = reviews_df['stars'].mean()
+   user_reviews = reviews_df[reviews_df['user_id'] == user_id].copy()
+   user_mean = user_reviews['stars'].mean()
+   user_harsh = user_mean - global_mean
+   return user_reviews, user_mean, user_harsh
 
-# parse global user stats
-global_mean  = reviews['stars'].mean()
-uid     = top_users_df.index.tolist()[1]
-user_reviews = reviews[reviews.user_id == uid].copy()
-user_mean    = user_reviews['stars'].mean()
-user_harsh   = user_mean - global_mean
+# building featue matrix
+def build_feature_matrix(user_reviews, business_df, user_cuisine, cuisines, user_mean, user_harsh):
+   """
+   build the feature matrix X and target vector y for one user's past review history.
+   - user_reviews: their review rows
+   - business_df: restaurant info
+   - user_cuisine: all user's average ratings across each cuisine as a vector
+   - cuisines: list of cuisines to refer to
+   - user_mean, user_harsh: statistics specific to the target user that might sway values
+   """
+   # merge in business info
+   df = user_reviews.merge(
+      business_df[['business_id','stars','state','categories','latitude','longitude']],
+      on='business_id', how='left'
+   ).rename(columns={'stars_x':'stars_x','stars_y':'stars_y'})
 
-# merge with business info
-df = user_reviews.merge(
-    business[['business_id','stars','state','categories','latitude','longitude']],
-    on='business_id', how='left'
-).rename(columns={'stars_x':'stars_x','stars_y':'stars_y'})
+   # add user cuisine trend features
+   for c in cuisines:
+      df[f'cuisine_{c}'] = user_cuisine.loc[df['user_id'].iloc[0], c]
+   # add user mean & harshness
+   df['user_mean'] = user_mean
+   df['user_harsh'] = user_harsh
 
-# USER FEATURES (same for every row)
-#    a) cuisine-trend vector (one col per cuisine)
-for cuisine in cuisines:
-    df[f'cuisine_{cuisine}'] = user_cuisine.loc[uid, cuisine]
+   # restaurant cuisine flags
+   def flags_from_cuisines(cat_str):
+      tags = {x.strip().lower() for x in (cat_str or '').split(',')}
+      return {f'flag_{c}': int(c.lower() in tags) for c in cuisines}
+   flags_df = df['categories'].apply(flags_from_cuisines).apply(pd.Series)
+   df = pd.concat([df, flags_df], axis=1)
 
-#    b) overall mean & harshness
-df['user_mean']  = user_mean
-df['user_harsh'] = user_harsh
+   # states one-hot encoding
+   state_dummies = pd.get_dummies(df['state'], prefix='state')
+   df = pd.concat([df, state_dummies], axis=1)
 
-# RESTAURANT FEATURES
-#     a) cuisine flags (1 if restaurant’s categories include it)
-def flags_from_cuisines(cat_str):
-    tags = {c.strip().lower() for c in (cat_str or '').split(',')}
-    return {f'flag_{c}': int(c.lower() in tags) for c in cuisines}
+   # define feature columns
+   feature_cols = (
+      ['stars_y','latitude','longitude','user_mean','user_harsh']
+      + [f'cuisine_{c}' for c in cuisines]
+      + [f'flag_{c}' for c in cuisines]
+      + list(state_dummies.columns)
+   )
 
-flags_df = df['categories'].apply(flags_from_cuisines).apply(pd.Series)
-df = pd.concat([df, flags_df], axis=1)
+   # build X and y, and fill any NaNs with 0
+   X = df[feature_cols].fillna(0)
+   y = df['stars_x']
+   return X, y
 
-#     b) state one-hot encoding
-state_dummies = pd.get_dummies(df['state'], prefix='state')
-df = pd.concat([df, state_dummies], axis=1)
+# train the multivariable regressor and evaluate it
+def train_and_evaluate(X, y, test_size=0.2, random_state=42, alpha=1.0):
+   """
+   Split into train/validation, fit a Ridge regression pipeline,
+   and return (fitted_model, rmse, predictions_on_val).
+   """
+   X_train, X_val, y_train, y_val = train_test_split(
+      X, y, test_size=test_size, random_state=random_state
+   )
+   pipeline = Pipeline([
+      ('scaler', StandardScaler()),
+      ('ridge', Ridge(alpha=alpha))
+   ])
+   pipeline.fit(X_train, y_train)
+   preds = pipeline.predict(X_val)
+   rmse = np.sqrt(mean_squared_error(y_val, preds))
+   return pipeline, rmse, preds
 
-# build features and target
-feature_cols = (
-    ['stars_y','latitude','longitude','user_mean','user_harsh']
-    + [f'cuisine_{c}' for c in cuisines]
-    + [f'flag_{c}'    for c in cuisines]
-    + list(state_dummies.columns)
-)
-X = df[feature_cols]
-y = df['stars_x']
+def main():
+   # load everything
+   cuisines = load_cuisines('cuisines.txt')
+   reviews, business, user_cuisine = load_data(
+      'data/reviews.pkl',
+      'data/business.pkl',
+      'data/user_ratings_gt_300.pkl'
+   )
 
-# make sure no NaN values
-X = X.fillna(0)
+   # pick one user
+   top_users = pd.read_pickle('data/user_ratings.pkl').index.tolist()
+   uid = top_users[1]
 
-# train/test split
-X_train, X_val, y_train, y_val = train_test_split(
-    X, y, test_size=0.2, random_state=42
-)
+   # build features & target
+   user_reviews, user_mean, user_harsh = get_user_stats(reviews, uid)
+   X, y = build_feature_matrix(user_reviews, business, user_cuisine, cuisines, user_mean, user_harsh)
 
-# fit a simple Ridge regression pipeline
-model = make_pipeline(
-    StandardScaler(),
-    Ridge(alpha=1.0)
-)
-model.fit(X_train, y_train)
+   # train & eval
+   model, rmse, preds = train_and_evaluate(X, y)
 
-# eval
-preds = model.predict(X_val)
-print("RMSE:", np.sqrt(mean_squared_error(y_val, preds)))
-print(preds)
+   print(f"Trained Ridge regression for user {uid}")
+   print(f"Validation RMSE: {rmse:.4f}")
+   print("Sample predictions:", preds[:])
+
+if __name__ == "__main__":
+   main()
