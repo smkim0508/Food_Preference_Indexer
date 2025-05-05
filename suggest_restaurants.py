@@ -40,11 +40,11 @@ merged_df = pd.merge(reviews_df, business_df[['business_id', 'categories']], on=
 # loading a real user and processing it individually
 top_users_df = pd.read_pickle('data/user_ratings.pkl') # top 10 users with most reviews
 top_user_ids = top_users_df.index.tolist()
-target_user_id = top_user_ids[1]
+target_user_id = top_user_ids[0]
 
 target_user_ratings_df = preprocess_individual(merged_df, target_user_id)
 
-target_user_ratings_df = pd.read_pickle('data/dummy_ratings.pkl') # dummy to test
+# target_user_ratings_df = pd.read_pickle('data/dummy_ratings.pkl') # dummy to test
 
 # set targets, given by user input
 target_state = input("Enter the state (e.g., CA): ").strip()
@@ -54,7 +54,7 @@ target_cuisine = input("Enter the cuisine (e.g., Korean): ").strip()
 # find top similar users
 top_matches = find_top_matches(all_user_ratings_df, target_user_ratings_df, top_n=5)
 # exclude the target user
-# top_matches = [(idx, uid, sim) for (idx, uid, sim) in top_matches if uid != target_user_id]
+top_matches = [(idx, uid, sim) for (idx, uid, sim) in top_matches if uid != target_user_id]
 
 # go through top matches
 for idx, (user_idx, matched_user_id, sim) in enumerate(top_matches):
