@@ -33,7 +33,9 @@ Please find more about the app at [Restaurant Repo](https://github.com/smkim0508
 <hr>
 
 ### Dataset
-I experimented & developed the algorithm using the Yelp Business Reviews Dataset, found on Kaggle at: https://www.kaggle.com/datasets/yelp-dataset/yelp-dataset?select=yelp_academic_dataset_business.json
+I experimented & developed the algorithm using the [Yelp Business Reviews Dataset](https://www.kaggle.com/datasets/yelp-dataset/yelp-dataset?select=yelp_academic_dataset_business.json), found on Kaggle.
+
+This dataset has approximately 7M restaurant reviews across 2M users and 150K businesses.
 
 <hr>
 
