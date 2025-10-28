@@ -1,6 +1,7 @@
 # Personalized Restaurant Recommendation System
 
 #### Originally developed in part for final project in SML312: Independent Projects in Data Science taught by Professor Jonathan Hanke at Princeton University. 
+<hr>
 
 ### Overview
 The recommendations are made with two main objectives identified below:
@@ -17,18 +18,24 @@ $$
 \textit{scaled cos sim} = \cos sim \times \frac{\min(|a|, |b|)}{\max(|a|, |b|)}
 $$
 
+<hr>
+
 ### iOS Application
 A simple Flask server is used to power an iOS application to provide restaurant recommendations for Yelp users.
 - Also enables optional location & cuisine filtering to satisfy any cravings in your area!
 
 Demo Screen:
 
-<img src="./assets/images/swift_demo_2.png" alt="app_demo" width="200"/>
+<p align="center"><img src="./assets/images/swift_demo_2.png" alt="app_demo" width="200"/></p>
 
 Please find more about the app at [Restaurant Repo](https://github.com/smkim0508/RestaurantRepo).
 
+<hr>
+
 ### Dataset
 I experimented & developed the algorithm using the Yelp Business Reviews Dataset, found on Kaggle at: https://www.kaggle.com/datasets/yelp-dataset/yelp-dataset?select=yelp_academic_dataset_business.json
+
+<hr>
 
 ### Experimental Results
 Some training and evaluation examples are shown below:
