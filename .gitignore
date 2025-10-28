@@ -4,6 +4,6 @@
 *.txt
 *.json
 *.xlsx
-*.png
+graphs/
 __pycache__/
 .DS_Store
