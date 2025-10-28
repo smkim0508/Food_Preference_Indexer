@@ -22,7 +22,8 @@ A simple Flask server is used to power an iOS application to provide restaurant 
 - Also enables optional location & cuisine filtering to satisfy any cravings in your area!
 
 Demo Screen:
-![app_demo](assets/images/swift_demo_2.png)
+
+<img src="./assets/images/swift_demo_2.png" alt="app_demo" width="200"/>
 
 Please find more about the app at [Restaurant Repo](https://github.com/smkim0508/RestaurantRepo).
 
