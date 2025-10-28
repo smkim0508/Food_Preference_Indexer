@@ -15,7 +15,7 @@ At the end of the day, this goal models *very similar* to collaborative filterin
 I utilize a number of data science modeling methods (e.g. KNN, Multivariate Regression with Ridge and Lasso Regularization, Random Forest Classification) as well as a scaled cosine similarity-based static recommendation system.
 
 $$
-\textit{scaled cos sim} = \cos sim \times \frac{\min(|a|, |b|)}{\max(|a|, |b|)}
+\textit{scaled cos sim} = \textit{cos sim} \times \frac{\min(|a|, |b|)}{\max(|a|, |b|)}
 $$
 
 <hr>
@@ -24,7 +24,7 @@ $$
 A simple Flask server is used to power an iOS application to provide restaurant recommendations for Yelp users.
 - Also enables optional location & cuisine filtering to satisfy any cravings in your area!
 
-Demo Screen:
+*Demo Screen:*
 
 <p align="center"><img src="./assets/images/swift_demo_2.png" alt="app_demo" width="200"/></p>
 
