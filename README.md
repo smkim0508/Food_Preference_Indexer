@@ -43,7 +43,7 @@ This dataset has approximately 7M restaurant reviews across 2M users and 150K bu
 Some training and evaluation examples are shown below:
 
 - Heatmap Prediction
-![Heatmap Prediction](graphs/MVR_predictions_heatmap.png)
+![Heatmap Prediction](assets/images/MVR_predictions_heatmap.png)
 
 - RF Prediction
-![RF Prediction](graphs/RF_predictions_1st.png)
+![RF Prediction](assets/images/RF_predictions_1st.png)
